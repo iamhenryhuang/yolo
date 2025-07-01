@@ -102,10 +102,10 @@ python detect_dual.py \
 ## 📸 結果展示
 
 ### 偵測前
-![原始影像](badminton_court_1.jpg)
+![原始影像](train.jpg)
 
 ### 偵測後
-![偵測結果](badminton_court_2.jpg)
+![偵測結果](test.jpg)
 
 模型成功偵測到羽毛球場上的選手，並以紅色邊界框標示，信心分數達到 1.00。
 
