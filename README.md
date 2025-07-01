@@ -4,7 +4,7 @@
 
 ## 📋 專案概述
 
-本專案使用 YOLOv9-c 模型訓練了一個專門用於偵測羽毛球選手的物件偵測系統。透過在羽毛球比賽影像上的訓練，模型能夠高精度地識別場上的選手。
+使用 YOLOv9-c 模型訓練了一個專門用於偵測羽毛球選手的物件偵測系統。透過在羽毛球比賽影像上的訓練，模型能夠高精度地識別場上的選手。
 
 ## 🎯 功能特色
 
@@ -27,10 +27,12 @@
 ```
 yolo/
 ├── yolo_test.ipynb          # 完整的訓練和測試 Colab 筆記本
-├── badminton_court_1.jpg    # 原始羽毛球場影像範例
-├── badminton_court_2.jpg    # 偵測結果展示影像
+├── train.png                # 原始羽毛球場影像範例
+├── test.png                 # 偵測結果展示影像
 └── README.md                # 專案說明文件
 ```
+
+**注意**：由於資料集檔案過大，未包含在此儲存庫中。請參考下方說明準備自己的資料集。
 
 ## 🚀 快速開始
 
@@ -41,11 +43,17 @@ yolo/
 - CUDA 支援的 GPU（建議）
 - Google Colab（推薦）
 
-### 使用 Google Colab 執行
+### 使用 Google Colab 執行（推薦）
 
 1. 上傳 `yolo_test.ipynb` 到 Google Colab
 2. 確保已啟用 GPU 加速（執行階段 → 變更執行階段類型 → GPU）
-3. 依序執行所有程式碼區塊
+3. 準備你的羽毛球資料集並上傳到 Google Drive
+4. 依序執行所有程式碼區塊
+
+**資料集需求**：
+- 羽毛球比賽影像（PNG/JPG 格式）
+- 對應的 YOLO 格式標註檔案（TXT 格式）
+- 資料集配置檔案（datasets.yaml）
 
 ### 本地端安裝
 
@@ -61,23 +69,37 @@ pip install -r requirements.txt
 wget https://github.com/WongKinYiu/yolov9/releases/download/v0.1/yolov9-c.pt
 ```
 
+**注意**：本地端執行需要自行準備羽毛球資料集。建議使用 Google Colab 以獲得完整的使用體驗。
+
 ## 📚 使用方法
 
 ### 1. 準備數據集
+
+**重要提醒**：由於資料集檔案過大，未包含在此儲存庫中。你需要準備自己的羽毛球資料集。
 
 確保你的數據集符合 YOLO 格式：
 ```
 datasets/
 ├── images/
-│   ├── train/
-│   ├── val/
-│   └── test/
+│   ├── train/          # 訓練影像檔案
+│   ├── val/            # 驗證影像檔案
+│   └── test/           # 測試影像檔案
 ├── labels/
-│   ├── train/
-│   ├── val/
-│   └── test/
-└── datasets.yaml
+│   ├── train/          # 訓練標註檔案 (.txt)
+│   ├── val/            # 驗證標註檔案 (.txt)
+│   └── test/           # 測試標註檔案 (.txt)
+└── datasets.yaml       # 資料集配置檔案
 ```
+
+**資料集格式說明**：
+- 影像檔案：支援 JPG、PNG 格式
+- 標註檔案：YOLO 格式的 TXT 檔案，每行格式為 `class_id x_center y_center width height`
+- 配置檔案：YAML 格式，定義類別數量和路徑
+
+**取得資料集的建議方式**：
+1. 使用公開的羽毛球資料集
+2. 自行收集羽毛球比賽影像並標註
+3. 使用標註工具如 LabelImg 或 Roboflow 進行標註
 
 ### 2. 訓練模型
 
@@ -88,6 +110,8 @@ python train_dual.py \
 --weights yolov9-c.pt \
 --cfg models/detect/yolov9-c.yaml
 ```
+
+**注意**：確保 `datasets.yaml` 中的路徑指向你的資料集位置。
 
 ### 3. 進行偵測
 
@@ -131,6 +155,13 @@ python detect_dual.py \
 
 ## 🛠️ 常見問題
 
+### Q: 我沒有羽毛球資料集，如何開始？
+
+A: 你可以：
+1. 搜尋公開的羽毛球資料集
+2. 使用 Roboflow、LabelImg 等工具自行標註影像
+3. 參考筆記本中的資料集格式要求
+
 ### Q: 訓練時出現 "AttributeError: 'FreeTypeFont' object has no attribute 'getsize'"
 
 A: 這是 Pillow 版本相容性問題，不影響模型訓練，可以忽略此警告。
@@ -143,18 +174,9 @@ A: 在 `detect_dual.py` 中修改 `--conf` 參數，範圍為 0.0-1.0。
 
 A: 可以，但建議使用 GPU 以獲得更好的效能。將 `--device` 參數設為 `cpu`。
 
-## 📝 授權條款
+### Q: 本地端執行需要什麼額外準備？
 
-本專案遵循 MIT 授權條款。詳見 LICENSE 檔案。
-
-## 🤝 貢獻
-
-歡迎提交 Issue 和 Pull Request！
-
-## 📞 聯絡資訊
-
-如有任何問題或建議，請透過 GitHub Issues 聯絡我們。
-
----
-
-⭐ 如果這個專案對你有幫助，請給個星星！
+A: 除了程式碼外，你需要：
+1. 準備羽毛球影像資料集
+2. 製作對應的 YOLO 格式標註檔案
+3. 設定正確的 datasets.yaml 配置檔案
